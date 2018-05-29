@@ -110,7 +110,8 @@ class wrap_3dfcn(object):
         next_layer_input = input
         for layer_counter in range(layer_num):
             W = params[layer_counter*2]
-            pepe=W*(1-dropout_rates[layer_counter])
+            pdb.set_trace()
+            
             b = params[layer_counter*2+1]
             if show_param_label:
                 print 'layer number:{0}, size of filter and base: {1} {2}'.format(layer_counter, W.shape.eval(), b.shape.eval())
