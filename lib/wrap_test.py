@@ -147,9 +147,9 @@ def test_wrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num
     
     start_time = time.time()
     for case_counter in xrange(n_cases):
-        
+        pdb.set_trace()
         data_path = whole_volume_path + str(74) + '.mat'
-        data_set = np.transpose(np.array(h5py.File(data_path)['patch'])   
+        data_set = np.transpose(np.array(h5py.File(data_path)['patch']))   
         data_set = data_set - np.mean(data_set)
         data_set = data_set.reshape((data_set.shape[0],10,1,16,16))
         wrapper = wrap_3dfcn(input = theano.shared(np.asarray(data_set,theano.config.floatX),borrow = True),
