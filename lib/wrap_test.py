@@ -158,7 +158,7 @@ def test_wrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num
             activations = activations,
             dropout_rates = dropout_rates,
             para_path = para_path,
-            final_size = (dim2_score_end_pos[0], dim0_score_end_pos[0], dim1_score_end_pos[0]))    
+            final_size = (2, 2, 2))    
         test_model = theano.function(inputs = [], outputs = wrapper.score_volume)
         smaller_score = test_model()
         #smaller_score=wrapper.score_volume
