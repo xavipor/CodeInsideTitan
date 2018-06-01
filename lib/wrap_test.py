@@ -133,6 +133,7 @@ class wrap_3dfcn(object):
                 
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
+                pdb.set_trace()
                 aux2=aux.flatten(2)
                 aux3= aux2.reshape((-1,150))
                 layer2 = HiddenLayer(
