@@ -130,7 +130,7 @@ class wrap_3dfcn(object):
                 print 'layer number:{0}, size of filter and base: {1} {2}'.format(layer_counter, W.shape.eval(), b.shape.eval())
             
             if layer_counter ==3:
-                pdb.set_trace()
+                
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
                 aux2=aux.reshape((64*2*2*2,150))
@@ -138,7 +138,7 @@ class wrap_3dfcn(object):
                     input =my_layer_input, 
                     W =aux2,
                     b = b)  
-                np.save('outputConvo1Flatten.npy',my_layer_input.eval())
+                np.save('outputConvo1Flatten.npy',layer2.output.eval())
             if layer_counter ==4:
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
@@ -147,7 +147,9 @@ class wrap_3dfcn(object):
                     input =my_layer_input,
                     W = aux2,
                     b = b)  
-                np.save('outputConvo2Flatten.npy',my_layer_input.eval())           
+                pdb.set_trace()
+                np.save('outputConvo2Flatten.npy',layer3.output.eval()) 
+
             
             next_layer = ConvPoolLayer(
                     input = next_layer_input,
