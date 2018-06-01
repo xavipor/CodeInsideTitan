@@ -74,6 +74,19 @@ class LogisticRegression(object):
         # reshape back into score volume
         self.score_map = self.p_y_given_x.reshape((z,y,x,2)).dimshuffle(3,2,1,0)  # dimension is z y x
         self.y_pred = T.argmax(self.p_y_given_x,axis=1)
+
+class HiddenLayer(object):
+    def __init__(self, input, W, b, activation=relu):
+        self.input=input
+        self.W = W
+        self.b = b
+        
+        lin_output = T.dot(input,self.W) + self.b
+        self.output = (
+            lin_output if activation is None
+            else activation(lin_output)
+        )
+        self.params = [self.W, self.b]
     
 class wrap_3dfcn(object):
     def __init__(self, input, layer_num, maxpool_sizes, activations, dropout_rates,
@@ -122,9 +135,28 @@ class wrap_3dfcn(object):
                     base = b,
                     activation = activations[layer_counter],
                     poolsize = maxpool_sizes[layer_counter])
-            
+            if layer_counter ==3:
+                pdb.set_trace()
+                my_layer_input = next_layer.output.flatten(2)
+                aux= W*(1-dropout_rates[layer_counter])
+                aux2=aux.reshape((64*2*2*2,150))
+                layer2 = HiddenLayer(
+                    W =aux2,
+                    b = b)  
+                np.save('outputConvo1Flatten.npy',my_layer_input.eval())
+            if layer_counter ==3:
+                my_layer_input = next_layer.output.flatten(2)
+                aux= W*(1-dropout_rates[layer_counter])
+                aux2=aux.reshape((150,2))
+                layer3 = HiddenLayer(
+                    input = layer2_input,
+                    W = aux2,
+                    b = b)  
+                np.save('outputConvo2Flatten.npy',my_layer_input.eval())
             self.layers.append(next_layer)
             next_layer_input = next_layer.output
+            
+
             layer_counter += 1
         
         final_time, final_height, final_width = final_size
