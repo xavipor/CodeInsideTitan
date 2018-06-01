@@ -139,7 +139,7 @@ class wrap_3dfcn(object):
                 layer2 = HiddenLayer(
                     input =my_layer_input, 
                     W =aux3,
-                    b = b)  
+                    b = b)
                 np.save('outputConvo1Flatten_1.npy',layer2.output.eval())
 
 
