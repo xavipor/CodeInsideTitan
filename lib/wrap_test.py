@@ -138,7 +138,44 @@ class wrap_3dfcn(object):
                     input =my_layer_input, 
                     W =aux2,
                     b = b)  
+                np.save('outputConvo1Flatten_1.npy',layer2.output.eval())
+
+                aux= W*(1-dropout_rates[layer_counter])
+                aux = aux.dimshuffle(1,2,3,4,0)
+                aux2=aux.reshape((64*2*2*2,150))
+                layer2 = HiddenLayer(
+                    input =my_layer_input, 
+                    W =aux2,
+                    b = b)  
                 np.save('outputConvo1Flatten_2.npy',layer2.output.eval())
+
+                aux= W*(1-dropout_rates[layer_counter])
+                aux = aux.dimshuffle(1,0,2,3,4)
+                aux2=aux.reshape((64*2*2*2,150))
+                layer2 = HiddenLayer(
+                    input =my_layer_input, 
+                    W =aux2,
+                    b = b)  
+                np.save('outputConvo1Flatten_3.npy',layer2.output.eval())
+
+                aux= W*(1-dropout_rates[layer_counter])
+                aux = aux.dimshuffle(1,3,4,2,0)
+                aux2=aux.reshape((64*2*2*2,150))
+                layer2 = HiddenLayer(
+                    input =my_layer_input, 
+                    W =aux2,
+                    b = b)  
+                np.save('outputConvo1Flatten_4.npy',layer2.output.eval())
+
+                aux= W*(1-dropout_rates[layer_counter])
+                aux = aux.dimshuffle(0,1,3,4,2)
+                aux2=aux.reshape((64*2*2*2,150))
+                layer2 = HiddenLayer(
+                    input =my_layer_input, 
+                    W =aux2,
+                    b = b)  
+                np.save('outputConvo1Flatten_5.npy',layer2.output.eval())
+
             if layer_counter ==4:
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
@@ -158,7 +195,7 @@ class wrap_3dfcn(object):
                     base = b,
                     activation = activations[layer_counter],
                     poolsize = maxpool_sizes[layer_counter])
-
+            pdb.set_trace()
             self.layers.append(next_layer)
             next_layer_input = next_layer.output
             
