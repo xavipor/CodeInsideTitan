@@ -133,6 +133,7 @@ class wrap_3dfcn(object):
                 
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
+                aux = aux.dimshuffle(1,2,3,0)
                 aux2=aux.reshape((64*2*2*2,150))
                 layer2 = HiddenLayer(
                     input =my_layer_input, 
@@ -142,6 +143,7 @@ class wrap_3dfcn(object):
             if layer_counter ==4:
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
+                aux = aux.dimshuffle(1,2,3,0)
                 aux2=aux.reshape((150,2))
                 layer3 = HiddenLayer(
                     input =my_layer_input,
