@@ -114,7 +114,7 @@ class wrap_3dfcn(object):
         :type final_size: list of length 3
         :param final_size: output score volume size -- (final_time, final_height, final_width) 
         """
-	allPossibleWeights = list(itertools.permutations([0,1,2,3,4]))
+        allPossibleWeights = list(itertools.permutations([0,1,2,3,4]))
         f = open(para_path,'r') 
         params = cPickle.load(f) 
         if show_param_label:
@@ -144,18 +144,6 @@ class wrap_3dfcn(object):
                     np.save(FileName,layer2.output.eval())
 
 
-                
-                aux2=aux.flatten(2)
-                pdb.set_trace()
-                print("Finish!")
-                aux3 = aux2.T
-                layer2 = HiddenLayer(
-                    input =my_layer_input, 
-                    W =aux3,
-                    b = b)  
-                np.save('outputConvo1Flatten_2.npy',layer2.output.eval())
-                pdb.set_trace()
-
             if layer_counter ==4:
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
@@ -169,16 +157,33 @@ class wrap_3dfcn(object):
                 pdb.set_trace()
                 np.save('outputConvo2Flatten.npy',layer3.output.eval()) 
 
-            
-            next_layer = ConvPoolLayer(
-                    input = next_layer_input,
-                    filter = W*(1-dropout_rates[layer_counter]),
-                    base = b,
-                    activation = activations[layer_counter],
-                    poolsize = maxpool_sizes[layer_counter])
-            pdb.set_trace()
-            self.layers.append(next_layer)
-            next_layer_input = next_layer.output
+            if layer_counter ==3:
+                aux= next_layer_input
+                for n,e in enumerate(allPossibleWeights):
+                    FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allOutputs/Output' + str(n) + '.npy'           
+                    aux2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
+                    aux3= aux2.reshape((1,-1))
+                    next_layer = ConvPoolLayer(
+                            input = aux3,
+                            filter = W*(1-dropout_rates[layer_counter]),
+                            base = b,
+                            activation = activations[layer_counter],
+                            poolsize = maxpool_sizes[layer_counter])
+                    np.save(FileName,next_layer.output.eval())
+                    pdb.set_trace()
+                    print("Finish!")
+                    pdb.set_trace()
+
+            else:
+                next_layer = ConvPoolLayer(
+                        input = next_layer_input,
+                        filter = W*(1-dropout_rates[layer_counter]),
+                        base = b,
+                        activation = activations[layer_counter],
+                        poolsize = maxpool_sizes[layer_counter])
+                pdb.set_trace()
+                self.layers.append(next_layer)
+                next_layer_input = next_layer.output                
             
 
             layer_counter += 1
