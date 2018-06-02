@@ -1,3 +1,4 @@
+
 import numpy as np
 import theano.tensor as T
 import theano
@@ -115,7 +116,7 @@ class wrap_3dfcn(object):
         :param final_size: output score volume size -- (final_time, final_height, final_width) 
         """
         allPossibleWeights = list(itertools.permutations([0,1,2,3,4]))
-	allPossibleWeightsTruncated = allPossibleWeights[34:]
+    allPossibleWeightsTruncated = allPossibleWeights[34:]
         f = open(para_path,'r') 
         params = cPickle.load(f) 
         if show_param_label:
@@ -130,7 +131,47 @@ class wrap_3dfcn(object):
             b = params[layer_counter*2+1]
             if show_param_label:
                 print 'layer number:{0}, size of filter and base: {1} {2}'.format(layer_counter, W.shape.eval(), b.shape.eval())
+      
+            if layer_counter ==3:
+                aux= W*(1-dropout_rates[layer_counter])
+                for m,el in enumerate(allPossibleWeightsTruncated):
+                    mylayer = next_layer.output.dimshuffle(el[0],el[1],el[2],el[3],el[4])
+                    my_layer_input = mylayer.reshape((1,-1))
+                    print ("position: ",m)
+                    
+                    for n,e in enumerate(allPossibleWeights):
+                        FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allWeights/Output'+str(m+34)+'_'+ str(n) + '.npy'
+                        aux2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
+                        aux3= aux2.reshape((-1,150))
+                        layer2 = HiddenLayer(
+                            input =my_layer_input, 
+                            W =aux3,
+                            b = b)
+                        np.save(FileName,layer2.output.eval())
+                
+                aux2=aux.flatten(2)
+                pdb.set_trace()
+                print("Finish!")
+                aux3 = aux2.T
+                layer2 = HiddenLayer(
+                    input =my_layer_input, 
+                    W =aux3,
+                    b = b)  
+                np.save('outputConvo1Flatten_2.npy',layer2.output.eval())
+                pdb.set_trace()
+            if layer_counter ==4:
+                my_layer_input = next_layer.output.flatten(2)
+                aux= W*(1-dropout_rates[layer_counter])
+                aux = aux.dimshuffle(1,2,3,4,0)
+                aux2=aux.reshape((150,2))
+                layer3 = HiddenLayer(
+                    input =my_layer_input,
+                    W = aux2,
+                    b = b)  
+                pdb.set_trace()
+                np.save('outputConvo2Flatten.npy',layer3.output.eval()) 
 
+            
             next_layer = ConvPoolLayer(
                     input = next_layer_input,
                     filter = W*(1-dropout_rates[layer_counter]),
@@ -143,7 +184,7 @@ class wrap_3dfcn(object):
             
 
             layer_counter += 1
-
+        
         final_time, final_height, final_width = final_size
         score_volume_layer = LogisticRegression(
                 input = self.layers[-1].output,
@@ -188,4 +229,3 @@ def test_wrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num
         print 'Case {} wrap over!'.format(case_counter+1)
     end_time = time.time()
     print 'time spent {} seconds.'.format((end_time-start_time))
-                      

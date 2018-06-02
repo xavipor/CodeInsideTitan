@@ -16,7 +16,7 @@ for m in range(120):
         outputFlatten = np.load(File)
         substraction = convor - outputFlatten
         
-        if outputFlatten[0][1]==convor[0][1]:
+        if (132.45729065 in outputFlatten) :
             print (m,n,sum(sum(substraction)))
 
 
