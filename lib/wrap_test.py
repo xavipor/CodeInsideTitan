@@ -130,7 +130,7 @@ class wrap_3dfcn(object):
             b = params[layer_counter*2+1]
             if show_param_label:
                 print 'layer number:{0}, size of filter and base: {1} {2}'.format(layer_counter, W.shape.eval(), b.shape.eval())
- """           
+"""           
             if layer_counter ==3:
                 aux= W*(1-dropout_rates[layer_counter])
                 for m,el in enumerate(allPossibleWeightsTruncated):
@@ -173,7 +173,6 @@ class wrap_3dfcn(object):
                     b = b)  
                 pdb.set_trace()
                 np.save('outputConvo2Flatten.npy',layer3.output.eval()) 
-
 """
             
             next_layer = ConvPoolLayer(
