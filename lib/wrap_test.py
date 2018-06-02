@@ -6,6 +6,7 @@ import theano.tensor.nnet.conv3d2d
 import scipy.io as sio
 import sys
 import pdb
+import itertools
 
 import cPickle,h5py
 from lib.max_pool import max_pool_3d
@@ -113,7 +114,7 @@ class wrap_3dfcn(object):
         :type final_size: list of length 3
         :param final_size: output score volume size -- (final_time, final_height, final_width) 
         """
-	 
+	    allPossibleWeights = list(itertools.permutations([0,1,2,3,4]))
         f = open(para_path,'r') 
         params = cPickle.load(f) 
         if show_param_label:
@@ -130,22 +131,23 @@ class wrap_3dfcn(object):
                 print 'layer number:{0}, size of filter and base: {1} {2}'.format(layer_counter, W.shape.eval(), b.shape.eval())
             
             if layer_counter ==3:
-                
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
-                au2 = aux.dimshuffle(1,2,3,4,0)
-                aux2=au2.flatten(2)
-                aux3= aux2.reshape((-1,150))
-                layer2 = HiddenLayer(
-                    input =my_layer_input, 
-                    W =aux3,
-                    b = b)
-                np.save('outputConvo1Flatten_1.npy',layer2.output.eval())
+                for n,e in enumerate(allPossibleWeights):
+                    FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allWeights/Output' + str(n) + '.npy'
+                    au2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
+                    aux3= aux2.reshape((-1,150))
+                    layer2 = HiddenLayer(
+                        input =my_layer_input, 
+                        W =aux3,
+                        b = b)
+                    np.save(FileName,layer2.output.eval())
 
 
                 
                 aux2=aux.flatten(2)
                 pdb.set_trace()
+                print("Finish!")
                 aux3 = aux2.T
                 layer2 = HiddenLayer(
                     input =my_layer_input, 
