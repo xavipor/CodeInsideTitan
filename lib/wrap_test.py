@@ -135,7 +135,7 @@ class wrap_3dfcn(object):
                 aux= W*(1-dropout_rates[layer_counter])
                 for n,e in enumerate(allPossibleWeights):
                     FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allWeights/Output' + str(n) + '.npy'
-                    au2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
+                    aux2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
                     aux3= aux2.reshape((-1,150))
                     layer2 = HiddenLayer(
                         input =my_layer_input, 
