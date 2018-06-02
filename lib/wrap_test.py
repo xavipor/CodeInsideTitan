@@ -131,18 +131,33 @@ class wrap_3dfcn(object):
                 print 'layer number:{0}, size of filter and base: {1} {2}'.format(layer_counter, W.shape.eval(), b.shape.eval())
             
             if layer_counter ==3:
-                my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
-                for n,e in enumerate(allPossibleWeights):
-                    FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allWeights/Output' + str(n) + '.npy'
-                    aux2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
-                    aux3= aux2.reshape((-1,150))
-                    layer2 = HiddenLayer(
-                        input =my_layer_input, 
-                        W =aux3,
-                        b = b)
-                    np.save(FileName,layer2.output.eval())
+                for m,el in enumerate(allPossibleWeights):
+                    mylayer = next_layer.output.dimshuffle(el[0],el[1],el[2],el[3],el[4])
+                    my_layer_input = mylayer.reshape((1,-1))
+                    
+                    for n,e in enumerate(allPossibleWeights):
+                        FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allWeights/Output'+str(m)+'_'+ str(n) + '.npy'
+                        aux2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
+                        aux3= aux2.reshape((-1,150))
+                        layer2 = HiddenLayer(
+                            input =my_layer_input, 
+                            W =aux3,
+                            b = b)
+                        np.save(FileName,layer2.output.eval())
 
+
+                
+                aux2=aux.flatten(2)
+                pdb.set_trace()
+                print("Finish!")
+                aux3 = aux2.T
+                layer2 = HiddenLayer(
+                    input =my_layer_input, 
+                    W =aux3,
+                    b = b)  
+                np.save('outputConvo1Flatten_2.npy',layer2.output.eval())
+                pdb.set_trace()
 
             if layer_counter ==4:
                 my_layer_input = next_layer.output.flatten(2)
@@ -157,33 +172,16 @@ class wrap_3dfcn(object):
                 pdb.set_trace()
                 np.save('outputConvo2Flatten.npy',layer3.output.eval()) 
 
-            if layer_counter ==3:
-                aux= next_layer_input
-                for n,e in enumerate(allPossibleWeights):
-                    FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allOutputs/Output' + str(n) + '.npy'           
-                    aux2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
-                    aux3= aux2.reshape((1,-1))
-                    next_layer = ConvPoolLayer(
-                            input = aux3,
-                            filter = W*(1-dropout_rates[layer_counter]),
-                            base = b,
-                            activation = activations[layer_counter],
-                            poolsize = maxpool_sizes[layer_counter])
-                    np.save(FileName,next_layer.output.eval())
-                    pdb.set_trace()
-                    print("Finish!")
-                    pdb.set_trace()
-
-            else:
-                next_layer = ConvPoolLayer(
-                        input = next_layer_input,
-                        filter = W*(1-dropout_rates[layer_counter]),
-                        base = b,
-                        activation = activations[layer_counter],
-                        poolsize = maxpool_sizes[layer_counter])
-                pdb.set_trace()
-                self.layers.append(next_layer)
-                next_layer_input = next_layer.output                
+            
+            next_layer = ConvPoolLayer(
+                    input = next_layer_input,
+                    filter = W*(1-dropout_rates[layer_counter]),
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+            pdb.set_trace()
+            self.layers.append(next_layer)
+            next_layer_input = next_layer.output
             
 
             layer_counter += 1
