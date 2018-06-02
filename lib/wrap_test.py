@@ -114,7 +114,7 @@ class wrap_3dfcn(object):
         :type final_size: list of length 3
         :param final_size: output score volume size -- (final_time, final_height, final_width) 
         """
-	    allPossibleWeights = list(itertools.permutations([0,1,2,3,4]))
+	allPossibleWeights = list(itertools.permutations([0,1,2,3,4]))
         f = open(para_path,'r') 
         params = cPickle.load(f) 
         if show_param_label:
