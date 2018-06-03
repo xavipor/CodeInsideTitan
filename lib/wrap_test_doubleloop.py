@@ -116,7 +116,7 @@ class wrap_3dfcn(object):
         :param final_size: output score volume size -- (final_time, final_height, final_width) 
         """
         allPossibleWeights = list(itertools.permutations([0,1,2,3,4]))
-        
+        allPossibleWeightsTruncated = allPossibleWeights[34:]
         f = open(para_path,'r') 
         params = cPickle.load(f) 
         if show_param_label:
@@ -132,21 +132,21 @@ class wrap_3dfcn(object):
       
             if layer_counter ==3:
                 aux= W*(1-dropout_rates[layer_counter])
-                for m in range(1):
-                    #mylayer = next_layer.output.dimshuffle(el[0],el[1],el[2],el[3],el[4])
-                    my_layer_input = mylayer.flatten(2)
+                for m,el in enumerate(allPossibleWeightsTruncated):
+                    mylayer = next_layer.output.dimshuffle(el[0],el[1],el[2],el[3],el[4])
+                    my_layer_input = mylayer.reshape((1,-1))
                     print ("position: ",m)
                     
                     for n,e in enumerate(allPossibleWeights):
-                        FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allOutputs/Output'+str(m)+'_'+ str(n) + '.npy'
+                        FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allWeights/Output'+str(m+34)+'_'+ str(n) + '.npy'
                         aux2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
-                        aux2= aux2.eval()
+			aux2= aux2.eval()
                         aux3= aux2.reshape(-1,150,order='F')
                         layer2 = HiddenLayer(
                             input =my_layer_input, 
                             W =aux3,
                             b = b)
-                       
+                        pdb.set_trace()
                         np.save(FileName,layer2.output.eval())
                 
                 aux2=aux.flatten(2)
