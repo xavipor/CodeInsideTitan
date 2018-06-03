@@ -135,8 +135,8 @@ class wrap_3dfcn(object):
                 pdb.set_trace()
                 for m,el in enumerate(allPossibleWeights):
                     mylayer = next_layer.output.dimshuffle(el[0],el[1],el[2],el[3],el[4])
-                    my_layer_input = next_layer.output.eval()
-                    mylayer = my_layer.reshape(512,150,order="F")
+                    javi = mylayer.eval()
+                    my_layer_input = javi.reshape(512,150,order="F")
                     print ("position: ",m)
                     
                     for n,e in enumerate(allPossibleWeights):
