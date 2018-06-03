@@ -136,7 +136,7 @@ class wrap_3dfcn(object):
                 for m,el in enumerate(allPossibleWeights):
                     mylayer = next_layer.output.dimshuffle(el[0],el[1],el[2],el[3],el[4])
                     javi = mylayer.eval()
-                    my_layer_input = javi.reshape(512,150,order="F")
+                    my_layer_input = javi.reshape(1,512,order="F")
                     print ("position: ",m)
                     
                     for n,e in enumerate(allPossibleWeights):
