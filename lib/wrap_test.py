@@ -125,6 +125,7 @@ class wrap_3dfcn(object):
         self.layers = []
         next_layer_input = input
         for layer_counter in range(layer_num):
+"""
             W = params[layer_counter*2]
             pdb.set_trace()
             
@@ -159,6 +160,7 @@ class wrap_3dfcn(object):
                     b = b)  
                 np.save('outputConvo1Flatten_2.npy',layer2.output.eval())
                 pdb.set_trace()
+"""                
             if layer_counter ==4:
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
