@@ -125,10 +125,7 @@ class wrap_3dfcn(object):
         self.layers = []
         next_layer_input = input
         for layer_counter in range(layer_num):
-"""
             W = params[layer_counter*2]
-            pdb.set_trace()
-            
             b = params[layer_counter*2+1]
             if show_param_label:
                 print 'layer number:{0}, size of filter and base: {1} {2}'.format(layer_counter, W.shape.eval(), b.shape.eval())
@@ -143,11 +140,13 @@ class wrap_3dfcn(object):
                     for n,e in enumerate(allPossibleWeights):
                         FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allWeights/Output'+str(m+34)+'_'+ str(n) + '.npy'
                         aux2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
-                        aux3= aux2.reshape((-1,150))
+			aux2= aux2.eval()
+                        aux3= aux2.reshape(-1,150,order='F')
                         layer2 = HiddenLayer(
                             input =my_layer_input, 
                             W =aux3,
                             b = b)
+                        pdb.set_trace()
                         np.save(FileName,layer2.output.eval())
                 
                 aux2=aux.flatten(2)
@@ -160,7 +159,6 @@ class wrap_3dfcn(object):
                     b = b)  
                 np.save('outputConvo1Flatten_2.npy',layer2.output.eval())
                 pdb.set_trace()
-"""                
             if layer_counter ==4:
                 my_layer_input = next_layer.output.flatten(2)
                 aux= W*(1-dropout_rates[layer_counter])
