@@ -133,7 +133,7 @@ class wrap_3dfcn(object):
             if layer_counter ==3:
                 aux= W*(1-dropout_rates[layer_counter])
                 pdb.set_trace()
-                for m in range(1):
+                for m,el in enumerate(allPossibleWeights):
                     mylayer = next_layer.output.dimshuffle(el[0],el[1],el[2],el[3],el[4])
                     my_layer_input = next_layer.output.eval()
                     mylayer = my_layer.reshape(512,150,order="F")
