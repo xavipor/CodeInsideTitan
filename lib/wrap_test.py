@@ -132,13 +132,15 @@ class wrap_3dfcn(object):
       
             if layer_counter ==3:
 
+
+
+
 		#Suggested approach to see the values of the weights.
 		javi = np.zeros((150,2,64,2,2))
 		javi[0,0,13,0,0]=1
-		javi[0,1,13,1,1]=1
+		javi[0,0,13,0,0]=1
                 pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
-		print("EYYYYYYYYYYYYYY llegamoooos")
-                pdb.set_trace()
+		
 
 		pedro = ConvPoolLayer(
                     input = next_layer.output,
@@ -147,7 +149,160 @@ class wrap_3dfcn(object):
                     activation = activations[layer_counter],
                     poolsize = maxpool_sizes[layer_counter])
 
-		np.save('2UNOSENELFILTRO.npy',pedro.output.eval())
+		np.save('0_0_0.npy',pedro.output.eval())
+
+
+                javi = np.zeros((150,2,64,2,2))
+                javi[0,0,13,0,0]=1
+                javi[0,0,13,0,1]=1
+                pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
+               
+
+                pedro = ConvPoolLayer(
+                    input = next_layer.output,
+                    filter =pepe,
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+
+                np.save('0_0_1.npy',pedro.output.eval())
+
+
+                javi = np.zeros((150,2,64,2,2))
+                javi[0,0,13,0,0]=1
+                javi[0,0,13,1,0]=1
+                pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
+                    
+
+                pedro = ConvPoolLayer(
+                    input = next_layer.output,
+                    filter =pepe,
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+
+                np.save('0_1_0.npy',pedro.output.eval())
+
+
+
+                javi = np.zeros((150,2,64,2,2))
+                javi[0,0,13,0,0]=1
+                javi[0,0,13,1,1]=1
+                pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
+
+
+                pedro = ConvPoolLayer(
+                    input = next_layer.output,
+                    filter =pepe,
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+
+                np.save('0_1_1.npy',pedro.output.eval())
+
+
+
+
+
+
+
+
+                javi = np.zeros((150,2,64,2,2))
+                javi[0,0,13,0,0]=1
+                javi[0,1,13,0,0]=1
+                pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
+
+
+                pedro = ConvPoolLayer(
+                    input = next_layer.output,
+                    filter =pepe,
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+
+                np.save('1_0_0.npy',pedro.output.eval())
+
+
+                javi = np.zeros((150,2,64,2,2))
+                javi[0,0,13,0,0]=1
+                javi[0,1,13,0,1]=1
+                pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
+
+
+                pedro = ConvPoolLayer(
+                    input = next_layer.output,
+                    filter =pepe,
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+
+                np.save('1_0_1.npy',pedro.output.eval())
+
+
+                javi = np.zeros((150,2,64,2,2))
+                javi[0,0,13,0,0]=1
+                javi[0,1,13,1,0]=1
+                pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
+
+
+                pedro = ConvPoolLayer(
+                    input = next_layer.output,
+                    filter =pepe,
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+
+                np.save('1_1_0.npy',pedro.output.eval())
+
+
+
+                javi = np.zeros((150,2,64,2,2))
+                javi[0,0,13,0,0]=1
+                javi[0,1,13,1,1]=1
+                pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
+
+
+                pedro = ConvPoolLayer(
+                    input = next_layer.output,
+                    filter =pepe,
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+
+                np.save('1_1_1.npy',pedro.output.eval())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                javi = np.zeros((150,2,64,2,2))
+                javi[0,0,13,0,0]=1
+                javi[0,1,13,1,1]=1
+                pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
+                print("EYYYYYYYYYYYYYY huyeeeeeeee")
+                pdb.set_trace()
+
+                pedro = ConvPoolLayer(
+                    input = next_layer.output,
+                    filter =pepe,
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+
+                np.save('2UNOSENELFILTRO.npy',pedro.output.eval())
+
+
+
+
                 aux= W*(1-dropout_rates[layer_counter])
 		print("EYYYYYYYYYYYYYY llegamoooos")
                 pdb.set_trace()
