@@ -131,7 +131,24 @@ class wrap_3dfcn(object):
                 print 'layer number:{0}, size of filter and base: {1} {2}'.format(layer_counter, W.shape.eval(), b.shape.eval())
       
             if layer_counter ==3:
+
+		#Suggested approach to see the values of the weights.
+		javi = np.zeros((150,2,64,2,2))
+		javi[0,0,0,0,0]=1
+                pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
+		print("EYYYYYYYYYYYYYY llegamoooos")
+                pdb.set_trace()
+
+		pedro = ConvPoolLayer(
+                    input = next_layer.output,
+                    filter =pepe,
+                    base = b,
+                    activation = activations[layer_counter],
+                    poolsize = maxpool_sizes[layer_counter])
+
+
                 aux= W*(1-dropout_rates[layer_counter])
+		print("EYYYYYYYYYYYYYY llegamoooos")
                 pdb.set_trace()
                 for m,el in enumerate(allPossibleWeights):
                     mylayer = next_layer.output.dimshuffle(el[0],el[1],el[2],el[3],el[4])
@@ -140,10 +157,10 @@ class wrap_3dfcn(object):
                     print ("position: ",m)
                     
                     for n,e in enumerate(allPossibleWeights):
-                        FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allOutputs/Output'+str(m)+'_'+ str(n) + '.npy'
+                        FileName = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/allOutputs2/Output'+str(m)+'_'+ str(n) + '.npy'
                         aux2 = aux.dimshuffle(e[0],e[1],e[2],e[3],e[4])
                         aux2= aux2.eval()
-                        aux3= aux2.reshape(-1,150,order='F')
+                        aux3= aux2.reshape(-1,150)
                         layer2 = HiddenLayer(
                             input =my_layer_input, 
                             W =aux3,
