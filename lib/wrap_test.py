@@ -135,6 +135,7 @@ class wrap_3dfcn(object):
 		#Suggested approach to see the values of the weights.
 		javi = np.zeros((150,2,64,2,2))
 		javi[0,0,13,0,0]=1
+		javi[0,1,13,1,1]=1
                 pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
 		print("EYYYYYYYYYYYYYY llegamoooos")
                 pdb.set_trace()
@@ -146,7 +147,7 @@ class wrap_3dfcn(object):
                     activation = activations[layer_counter],
                     poolsize = maxpool_sizes[layer_counter])
 
-
+		np.save('2UNOSENELFILTRO.npy',pedro.output.eval())
                 aux= W*(1-dropout_rates[layer_counter])
 		print("EYYYYYYYYYYYYYY llegamoooos")
                 pdb.set_trace()
