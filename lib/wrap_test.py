@@ -134,7 +134,7 @@ class wrap_3dfcn(object):
 
 		#Suggested approach to see the values of the weights.
 		javi = np.zeros((150,2,64,2,2))
-		javi[0,0,0,0,0]=1
+		javi[0,0,13,0,0]=1
                 pepe=theano.shared(np.asarray(javi,theano.config.floatX),borrow = True)
 		print("EYYYYYYYYYYYYYY llegamoooos")
                 pdb.set_trace()
