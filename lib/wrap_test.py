@@ -15,6 +15,28 @@ from lib.relu import relu
 from lib.load_mat import load_mat,sharedata
 floatX = theano.config.floatX
 
+class testOtherConvo(object):
+
+    def __init__ (self,base,input, filters,activation):
+	"""
+	Be careful my friend, since here the order of the elements for the in input and the output changes
+	dramatically, now the order is  (batch size, input channels, input depth, input rows, input columns)
+	and for the filters   ( output channels, input channels, filter depth, filter rows, filter columns)
+	The output will be (batch size, output channels, output depth, output rows, output columns)
+	So a dimshuffle will be needed. 
+
+	"""
+	self.input = input
+	self.W = filter
+	self.b = base
+	
+	myConvoOut = T.nnet.conv3D(self.input,self.W)
+	pdb.set_trace()
+	self.output = activation(myConvoOut)
+
+
+
+
 class ConvPoolLayer(object):
     def __init__(self, input, filter, base, activation, poolsize, dtype = theano.config.floatX):
         
@@ -131,7 +153,7 @@ class wrap_3dfcn(object):
                 print 'layer number:{0}, size of filter and base: {1} {2}'.format(layer_counter, W.shape.eval(), b.shape.eval())
       
             if layer_counter ==3:
-
+		"""
 
 
 
@@ -299,11 +321,14 @@ class wrap_3dfcn(object):
                     poolsize = maxpool_sizes[layer_counter])
 
                 np.save('2UNOSENELFILTRO.npy',pedro.output.eval())
+		"""
 
 
+		myW = W.dimshuffle(0,2,1,3,4)
+                aux= myW*(1-dropout_rates[layer_counter])
+		myInput = next_layer.output.dimshuffle(0,2,1,3,4)
 
-
-                aux= W*(1-dropout_rates[layer_counter])
+		pepe= testOtherConvo(b,myInput,aux,activations[layer_counter])
 		print("EYYYYYYYYYYYYYY llegamoooos")
                 pdb.set_trace()
                 for m,el in enumerate(allPossibleWeights):
