@@ -6,6 +6,7 @@ import theano.tensor.nnet.conv3d2d
 import scipy.io as sio
 import sys
 import pdb
+import pdb
 
 import cPickle,h5py
 from lib.max_pool import max_pool_3d
@@ -68,6 +69,7 @@ class ConvPoolLayer(object):
 class LogisticRegression(object):
     def __init__(self,input,x,y,z):
         # flatten the input feature volumes into vectors
+	pdb.set_trace()
         self.input = input.reshape((z,2,y,x)).dimshuffle(0,2,3,1).reshape((x*y*z,2))
         # employ softmax to get prediction probabilities
         self.p_y_given_x = T.nnet.softmax(self.input)

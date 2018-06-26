@@ -20,8 +20,8 @@ def test_model():
     dropout_rates = [0.2,0.3,0.3,0.3,0.3]
 
     print 'wrapping test dataset ... '
-    #whole_volume_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/result/mat_data/'
-    whole_volume_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/patches/'
+    whole_volume_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/result/mat_data/'
+    #whole_volume_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/patches/'
     save_score_map_path = result_path + 'score_map/'
     if not os.path.exists(save_score_map_path):
         os.makedirs(save_score_map_path)
