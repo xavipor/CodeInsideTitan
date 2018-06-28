@@ -102,7 +102,7 @@ class wrap_3dfcn(object):
         :type final_size: list of length 3
         :param final_size: output score volume size -- (final_time, final_height, final_width) 
         """
-	 
+	pdb.set_trace()	 
         f = open(para_path,'r') 
         params = cPickle.load(f) 
         if show_param_label:
@@ -128,7 +128,7 @@ class wrap_3dfcn(object):
             self.layers.append(next_layer)
             next_layer_input = next_layer.output
             layer_counter += 1
-        
+	    pdb.set_trace()        
         final_time, final_height, final_width = final_size
         score_volume_layer = LogisticRegression(
                 input = self.layers[-1].output,
@@ -141,7 +141,7 @@ class wrap_3dfcn(object):
                     
 def test_wrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num,maxpool_sizes,activations,dropout_rates,
                 para_path,save_score_map_path,whole_volume_path,mode):    
-                           
+                              
     files = os.listdir(whole_volume_path)
     n_cases = len(files)
     print 'Have {} cases to process'.format(n_cases)               
@@ -149,7 +149,8 @@ def test_wrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num
     in_height, in_width, in_time = input_sizes
     start_time = time.time()
     for case_counter in xrange(n_cases):
-        print 'Processing case # {} ... '.format(case_counter + 1)
+        """
+	print 'Processing case # {} ... '.format(case_counter + 1)
         # cut the whole volume into smaller blocks, otherwise GPU will be out of memory
         dim0_score_start_pos = []
         dim0_score_end_pos = []
@@ -215,7 +216,42 @@ def test_wrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num
                     #smaller_score=wrapper.score_volume
                     score_mask[:,dim0_score_pos[dim0][0]-1:dim0_score_pos[dim0][1],dim1_score_pos[dim1][0]-1:dim1_score_pos[dim1][1],dim2_score_pos[dim2][0]-1:dim2_score_pos[dim2][1]] = smaller_score
                    # score_mask[:,dim0_score_pos[dim0][0]-1:dim0_score_pos[dim0][1],dim1_score_pos[dim1][0]-1:dim1_score_pos[dim1][1],dim2_score_pos[dim2][0]-1:dim2_score_pos[dim2][1]] = smaller_score.eval()
-                    
+        
+
+        data_path = whole_volume_path + str(case_counter+1) + '_' + mode + '.mat'
+        data_set = np.transpose(np.array(h5py.File(data_path)['data']))      
+        data_set = data_set - np.mean(data_set)
+        data_set = data_set.reshape((data_set.shape[0],in_time,1,in_height,in_width))
+        wrapper = wrap_3dfcn(input = theano.shared(np.asarray(data_set,theano.config.floatX),borrow = True),
+                                        layer_num = layer_num,
+                                        maxpool_sizes = maxpool_sizes,
+                                        activations = activations,
+                                        dropout_rates = dropout_rates,
+                                        para_path = para_path,
+                                        final_size = (output_sizes[0], output_sizes[0], output_sizes[0]))         
+        """
+	
+        data_path = whole_volume_path + str(74) + '.mat'
+        data_set = np.transpose(np.array(h5py.File(data_path)['patchFlatten']))   
+        data_set = data_set - np.mean(data_set)
+        data_set = data_set.reshape((data_set.shape[0],10,1,16,16))
+        wrapper = wrap_3dfcn(input = theano.shared(np.asarray(data_set,theano.config.floatX),borrow = True),
+            layer_num = layer_num,
+            maxpool_sizes = maxpool_sizes,
+            activations = activations,
+            dropout_rates = dropout_rates,
+            para_path = para_path,
+            final_size = (2, 2, 2))    
+        test_model = theano.function(inputs = [], outputs = wrapper.score_volume)
+        smaller_score = test_model()
+
+
+	pdb.set_trace()
+        test_model = theano.function(inputs = [], outputs = wrapper.score_volume)
+        smaller_score = test_model()
+        score_mask=smaller_score
+
+	            
         result_file_name = save_score_map_path + str(case_counter+1) + '_score_mask.mat'
         print 'The score_mask saved path:', result_file_name
         sio.savemat(result_file_name,{'score_mask':score_mask})
