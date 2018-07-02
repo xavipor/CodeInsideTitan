@@ -86,5 +86,6 @@ with tf.Session() as sess:
     value = sess.run(Z5,{X:image})
     np.save(path+'outputFlatten.npy',value)
     print(value)
+    print(value.shape)
     sess.close()
 
