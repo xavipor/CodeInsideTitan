@@ -28,7 +28,7 @@ class Bachitazion(object):
         #But we can save both cases with the following:
 
         currentBatchSize = len(self.listTrain[self.counterT * self.batchSize:(self.counterT*self.batchSize+self.batchSize)])
-        X=np.zeros((currentBatchSize,self.myShape[2],1,self.myShape[0],self.myShape[1]))
+        X=np.zeros((currentBatchSize,self.myShape[2],self.myShape[0],self.myShape[1],1))
         Y=np.zeros((currentBatchSize,2))
         
         #If you select a boundary to finish the list bigger than the propper list is fine it will work OK 
@@ -42,7 +42,7 @@ class Bachitazion(object):
             else:
                 auxY = np.array([0,1])
             
-            X[i,:,0,:,:]=patch
+            X[i,:,:,:,0]=patch
             Y[i,:]=auxY
             
         if self.counterT == self.number_batchesT:
@@ -56,9 +56,9 @@ class Bachitazion(object):
         #Take care, if counterT or counterE is equal to number_batches, the length is goign to be different,
         #But we can save both cases with the following:
 
-        currentBatchSize = len(self.listEval[self.counterT * self.batchSize:(self.counterT*self.batchSize+self.batchSize)])
-        X=np.zeros((currentBatchSize,self.myShape[2],1,self.myShape[0],self.myShape[1]))
-        Y=np.zeros((currentBatchSize,1))
+        currentBatchSize = len(self.listEval[self.counterE * self.batchSize:(self.counterE*self.batchSize+self.batchSize)])
+        X=np.zeros((currentBatchSize,self.myShape[2],self.myShape[0],self.myShape[1],1))
+        Y=np.zeros((currentBatchSize,2))
         
         #If you select a boundary to finish the list bigger than the propper list is fine it will work OK 
         for i,element in enumerate(self.listEval[self.counterE * self.batchSize:(self.counterE*self.batchSize+self.batchSize)]):
@@ -68,14 +68,14 @@ class Bachitazion(object):
             patch = patch.transpose(2,0,1)
             
             if "WO" in element:
-                auxY = 0
+                auxY = np.array([1,0])
             else:
-                auxY = 1
+                auxY = np.array([0,1])
             
-            X[i,:,0,:,:]=patch
-            Y[i,1]=auxY
+            X[i,:,:,:,0]=patch
+            Y[i,:]=auxY
             
-        if self.counterE == self.number_batchesT:
+        if self.counterE == self.number_batchesE:
             self.counterE=-1
         
         

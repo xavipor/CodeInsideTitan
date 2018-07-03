@@ -5,19 +5,21 @@ import cPickle
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import pdb
-#import Bachitazion
+from Bachitazion import Bachitazion
+import pickle
 
 
 
 
-whole_volume_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/patches/'
-data_path = whole_volume_path + str(74) + '.mat'
-data_set = np.transpose(np.array(h5py.File(data_path)['patchFlatten']))
-image =  data_set.reshape((data_set.shape[0],10,16,16,1))
-image2 = np.zeros((3,10,16,16,1))
-image2[0,:,:,:,:] = image
-image2[1,:,:,:,:] = image
-image2[2,:,:,:,:] = image
+##data_path = whole_volume_path + str(74) + '.mat'
+#data_set = np.transpose(np.array(h5py.File(data_path)['patchFlatten']))
+#image =  data_set.reshape((data_set.shape[0],10,16,16,1))
+def save_to_file(filename, object):
+    """ Save object to file
+    """
+    f = open(filename + '.pckl', 'wb')
+    pickle.dump(object, f)
+    f.close()
 
 def createPlaceHolders(n_H,n_W,n_C,n_D,n_Y):
     """
@@ -30,7 +32,7 @@ def createPlaceHolders(n_H,n_W,n_C,n_D,n_Y):
         n_C -- Channels of the input image
         n_y -- number of classes
     """
-    X = tf.placeholder(tf.float32,[None,n_D,n_H,n_W,n_C],name="X")
+    X = X = tf.placeholder(tf.float32,[None,n_D,n_H,n_W,n_C],name="X")
     Y = tf.placeholder(tf.float32,[None,n_Y],name = "Y")
     return X,Y
 
@@ -86,6 +88,7 @@ def computeCost(Z5,Y):
     cost - Tensor of the cost function
     """
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z5,labels=Y))
+
     return cost
 
 
@@ -94,6 +97,8 @@ def computeCost(Z5,Y):
 #Let it like this and call this function with **parameters should be fine....
 #def forward_propagation(X, W_L0,b_L0,W_L1,b_L1,W_L2,b_L2,W_L3,b_L3,W_L4,b_L4):
 def forward_propagation(X,parameters):
+    #This could have been done better defininf a Customized Convolution Layer and the same for flatten layer. 
+    #I mean, the result is the same but is more structured. 
 
     W_L0 = parameters["W0"]
     b_L0 = parameters["b0"]
@@ -146,23 +151,57 @@ def forward_propagation(X,parameters):
 
 
 
+def train(learning_rate=0.001,num_epochs = 50):
 
-#myBatchGenerator = 
-with tf.Session() as sess:   
+    myBatchGenerator = Bachitazion(sizeOfBatch=128,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/AllPatchesWithMicrobleedsTrain/')
+    err_val={}
+    acc_val={}
+
     X, Y = createPlaceHolders(16,16,1,10,2)
     parameters = initializeWeights()
     Z5 = forward_propagation(X,parameters)
     cost = computeCost(Z5, Y)
+    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+     # Calculate the correct predictions
+    correctPrediction = tf.equal(tf.argmax(Z5,1), tf.argmax(Y,1))
+    # Calculate accuracy on the test set
+    accuracy = tf.reduce_mean(tf.cast(correctPrediction, "float"))
+    #print ("Train Accuracy:", accuracy.eval({X: X_train, Y: Y_train}))
     init = tf.initialize_all_variables()
-    sess.run(init)
-    v= sess.run(Z5,{X:image2})
-    c = sess.run(cost,{X:image2,Y:np.array([[1,0],[1,0],[1,0]])})
 
-    print(c,v)
-    #Axis = 1, we need to collapse the columns
-    correct_prediction = tf.equal(tf.arg_max(Z5,1), tf.arg_max(Y,1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-    print ("Train Accuracy:", accuracy.eval({X: image2, Y:np.array([[0,1],[1,0],[1,0]])}))
+    with tf.Session() as sess:   
+        sess.run(init)
+        for epoch in range(num_epochs):
+
+            trainingCost = 0.
+            trainingAcc = 0.
+            for batch in range(int(myBatchGenerator.number_batchesT)+1):
+                miniX,miniY = myBatchGenerator.nextBatch_T()
+                _ , batchTrainingCost,batchTrainingAcc = sess.run([optimizer, cost,accuracy], feed_dict={X: miniX, Y: miniY})
+                trainingCost += batchTrainingCost
+                trainingAcc += batchTrainingAcc
+            trainingCost /= myBatchGenerator.number_batchesT
+            trainingAcc /= myBatchGenerator.number_batchesT
+
+            print("End of epoch {0:02d}: err(train) = {1:.2f} acc(train) = {2:.2f}".format(epoch+1,trainingCost,trainingAcc))
+
+
+
+            evalCost = 0.
+            evalAcc = 0.
+            for batch in range(int(myBatchGenerator.number_batchesE)+1):
+                miniX,miniY = myBatchGenerator.nextBatch_E()
+                batchEvalCost,batchEvalAcc = sess.run([cost,accuracy], feed_dict={X: miniX, Y: miniY})
+                evalCost += batchEvalCost
+                evalAcc += batchEvalAcc
+            evalCost /= myBatchGenerator.number_batchesE
+            evalAcc /= myBatchGenerator.number_batchesE
+
+            print("                 err(eval) = {1:.2f} acc(eval) = {2:.2f}".format(epoch+1,evalCost,evalAcc))
+            err_val[epoch + 1] = evalCost
+            acc_val[epoch + 1] = evalAcc
     sess.close()
+    save_to_file("FileToPlotCost",err_val)
+    save_to_file("FileToPlotEval",acc_val)
 
-
+train()
