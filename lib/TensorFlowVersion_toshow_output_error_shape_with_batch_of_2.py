@@ -14,10 +14,9 @@ whole_volume_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code
 data_path = whole_volume_path + str(74) + '.mat'
 data_set = np.transpose(np.array(h5py.File(data_path)['patchFlatten']))
 image =  data_set.reshape((data_set.shape[0],10,16,16,1))
-image2 = np.zeros((3,10,16,16,1))
+image2 = np.zeros((2,10,16,16,1))
 image2[0,:,:,:,:] = image
 image2[1,:,:,:,:] = image
-image2[2,:,:,:,:] = image
 
 def createPlaceHolders(n_H,n_W,n_C,n_D,n_Y):
     """
@@ -85,7 +84,8 @@ def computeCost(Z5,Y):
     Returns:
     cost - Tensor of the cost function
     """
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z5,labels=Y))
+    #cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z5,labels=Y))
+    cost=tf.nn.softmax_cross_entropy_with_logits(logits=Z5,labels=Y)
     return cost
 
 
@@ -156,13 +156,9 @@ with tf.Session() as sess:
     init = tf.initialize_all_variables()
     sess.run(init)
     v= sess.run(Z5,{X:image2})
-    c = sess.run(cost,{X:image2,Y:np.array([[1,0],[1,0],[1,0]])})
+    c = sess.run(cost,{X:image2,Y:np.array([[1,0],[1,0]])})
 
     print(c,v)
-    #Axis = 1, we need to collapse the columns
-    correct_prediction = tf.equal(tf.arg_max(Z5,1), tf.arg_max(Y,1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-    print ("Train Accuracy:", accuracy.eval({X: image2, Y:np.array([[0,1],[1,0],[1,0]])}))
     sess.close()
 
 
