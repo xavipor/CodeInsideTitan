@@ -151,18 +151,21 @@ def forward_propagation(X,parameters):
 
 
 
-def train(learning_rate=0.001,num_epochs = 50):
+def train(learning_rate=0.03,num_epochs = 100):
 
     myBatchGenerator = Bachitazion(sizeOfBatch=128,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/AllPatchesWithMicrobleedsTrain/')
     err_val={}
     acc_val={}
-
+    err_train={}
+    acc_train={}
     X, Y = createPlaceHolders(16,16,1,10,2)
     parameters = initializeWeights()
     Z5 = forward_propagation(X,parameters)
     cost = computeCost(Z5, Y)
-    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
-     # Calculate the correct predictions
+    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost) 
+#    optimizer = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(cost)    
+#    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)    
+ # Calculate the correct predictions
     correctPrediction = tf.equal(tf.argmax(Z5,1), tf.argmax(Y,1))
     # Calculate accuracy on the test set
     accuracy = tf.reduce_mean(tf.cast(correctPrediction, "float"))
@@ -200,8 +203,12 @@ def train(learning_rate=0.001,num_epochs = 50):
             print("                 err(eval) = {1:.2f} acc(eval) = {2:.2f}".format(epoch+1,evalCost,evalAcc))
             err_val[epoch + 1] = evalCost
             acc_val[epoch + 1] = evalAcc
+            err_train[epoch + 1] = trainingCost
+            acc_train[epoch + 1] = trainingAcc
     sess.close()
-    save_to_file("FileToPlotCost",err_val)
-    save_to_file("FileToPlotEval",acc_val)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/FileToPlotCostE_"+str(learning_rate)+"_"+str(num_epochs),err_val)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/FileToPlotEvalE_"+str(learning_rate)+"_"+str(num_epochs),acc_val)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/FileToPlotCostT_"+str(learning_rate)+"_"+str(num_epochs),err_train)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/FileToPlotEvalT_"+str(learning_rate)+"_"+str(num_epochs),acc_train)
 
 train()
