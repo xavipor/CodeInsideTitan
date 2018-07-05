@@ -57,11 +57,15 @@ def initializeWeights(preTrained = True,path='/home/jdominguezmartinez/pruebas/M
         W1 = tf.Variable(W_L1, name="W1",trainable = False)
         W2 = tf.Variable(W_L2, name="W2",trainable = False)
 
-        W3 = tf.Variable(W_L3, name="W3")
-        W3 = tf.reshape(W3,shape=[512,150])
-        W4 = tf.Variable(W_L4, name="W4")
-        W4 = tf.reshape(W4,shape=[150,2])
+        W3a = tf.Variable(W_L3, name="W3a")
+        W3b = tf.reshape(W3a,shape=[512,150])
+        W4a = tf.Variable(W_L4, name="W4a")
+        W4b = tf.reshape(W4a,shape=[150,2])
+	
 
+	W3 = tf.Variable(W3b, name="W3")
+        W4 = tf.Variable(W4b, name="W4")
+	
         b0 = tf.Variable(b_L0, name ="b0",trainable = False)
         b1 = tf.Variable(b_L1, name ="b1",trainable = False)
         b2 = tf.Variable(b_L2, name ="b2",trainable = False)

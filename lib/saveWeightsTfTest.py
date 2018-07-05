@@ -1,3 +1,9 @@
+
+"""
+Get the values saved by the authors of the paper and change the order of the dimensions due 
+to de requirements of the Convolutional Layers of TensorFlow
+"""
+
 import numpy as np
 import cPickle
 model_path ='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/model/fine_tuned_params.pkl'

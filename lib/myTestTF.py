@@ -61,6 +61,10 @@ def forward_propagation(X, W_L0,b_L0,W_L1,b_L1,W_L2,b_L2,W_L3,b_L3,W_L4,b_L4):
 	print(A4.get_shape().as_list())
         Z5=tf.nn.conv3d(A4,W_L4,strides=[1,1,1,1,1],padding='VALID') 
         Z5 = tf.nn.bias_add(Z5,b_L4)
+	print("____________________________________________________________")
+	print(W_L3.get_shape().as_list())
+	print(W_L4.get_shape().as_list())
+	print("___________________________________________________________")
 
 
         return Z5
@@ -89,5 +93,6 @@ with tf.Session() as sess:
     np.save(path+'outputConvo.npy',value)
     print(value)
     print(value.shape)
+    
     sess.close()
 
