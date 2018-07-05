@@ -152,7 +152,7 @@ def forward_propagation(X,parameters):
 
 
 
-def train(learning_rate=0.003,num_epochs = 1000,beta=0.001):
+def train(learning_rate=0.003,num_epochs =50,beta=0):
 
     myBatchGenerator = Bachitazion(sizeOfBatch=128,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/AllPatchesWithMicrobleedsTrain/')
     err_val={}
@@ -172,6 +172,8 @@ def train(learning_rate=0.003,num_epochs = 1000,beta=0.001):
     accuracy = tf.reduce_mean(tf.cast(correctPrediction, "float"))
     #print ("Train Accuracy:", accuracy.eval({X: X_train, Y: Y_train}))
     init = tf.initialize_all_variables()
+
+    saver = tf.train.Saver()
 
     with tf.Session() as sess:   
         sess.run(init)
@@ -206,6 +208,11 @@ def train(learning_rate=0.003,num_epochs = 1000,beta=0.001):
             acc_val[epoch + 1] = evalAcc
             err_train[epoch + 1] = trainingCost
             acc_train[epoch + 1] = trainingAcc
+
+	    if epoch %  10 == 0:
+                saver.save(sess, '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model',global_step=epoch)
+
+
     sess.close()
     save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
     save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
