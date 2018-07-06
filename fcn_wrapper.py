@@ -10,8 +10,10 @@ def test_model():
     result_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/result/'
     
     patch_size = [16,16,10]
+   # input_sizes = [536,536,168] #[in_height,in_width,in_time]
+   # output_sizes = [261,261,80]       
     input_sizes = [512,512,148] #[in_height,in_width,in_time]
-    output_sizes = [249,249,70]       
+    output_sizes = [249,249,70]     
     clip_rate = [3,3,2]  #the clip size must be exactly divided by the corresponding dimensions of the output_sizes
     layer_num = 5
     M_layer = 1

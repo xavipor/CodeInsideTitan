@@ -1,18 +1,19 @@
+
 % This script is to save each volume as a .mat file to input to cnn
 % The saved index is ordered by the id
 clear;clc;
 addpath('./NIfTI_20140122/')
 
 mode = 'test';
-img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/raw_data/';
+img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/DataResampledV2/';
 save_datasets_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/result/mat_data/';
 if ~exist(save_datasets_path)
     mkdir(save_datasets_path);
 end
 
-x = 512;
-y = 512;
-z = 150;
+x = 536;
+y = 536;
+z = 170;
 
 files = dir(img_data_path);
 files(1:2)=[]%To delete the first to elements that are junk

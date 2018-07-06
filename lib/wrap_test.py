@@ -195,7 +195,8 @@ def test_wrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num
         data_set = np.transpose(np.array(h5py.File(data_path)['data']))      
         data_set = data_set - np.mean(data_set)
         data_set = data_set.reshape((data_set.shape[0],in_time,1,in_height,in_width))
-
+	print("WEEEEEEEEPA________________________________")
+        pdb.set_trace()
 
         for dim2 in range(clip_rate[2]):
             for dim1 in range(clip_rate[1]):
