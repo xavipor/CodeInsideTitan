@@ -47,7 +47,7 @@ def forward_propagation(X, W_L0,b_L0,W_L1,b_L1,W_L2,b_L2,W_L3,b_L3,W_L4,b_L4):
         # MAXPOOL: window 8x8, sride 8, padding 'SAME'
         Z2 =tf.nn.conv3d(A1,W_L1,strides=[1,1,1,1,1],padding='VALID') 
         Z2 = tf.nn.bias_add(Z2,b_L1)
-        A2 = tf.nn.relu(Z2)
+        A1 = tf.nn.relu(Z2)
 	print(A2.get_shape().as_list())
         # CONV2D: filters W2, stride 1, padding 'SAME'
         Z3 =tf.nn.conv3d(A2,W_L2,strides=[1,1,1,1,1],padding='VALID') 

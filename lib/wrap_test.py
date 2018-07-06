@@ -112,7 +112,6 @@ class wrap_3dfcn(object):
         next_layer_input = input
         for layer_counter in range(layer_num):
             W = params[layer_counter*2]
-            pdb.set_trace()
             
             b = params[layer_counter*2+1]
             if show_param_label:
@@ -128,7 +127,8 @@ class wrap_3dfcn(object):
             self.layers.append(next_layer)
             next_layer_input = next_layer.output
             layer_counter += 1
-	    pdb.set_trace()        
+	print( "Ey javi espabila que vas a entrar, chequea self.layers[-1].output")
+	pdb.set_trace()     
         final_time, final_height, final_width = final_size
         score_volume_layer = LogisticRegression(
                 input = self.layers[-1].output,
@@ -149,7 +149,7 @@ def test_wrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num
     in_height, in_width, in_time = input_sizes
     start_time = time.time()
     for case_counter in xrange(n_cases):
-        """
+        
 	print 'Processing case # {} ... '.format(case_counter + 1)
         # cut the whole volume into smaller blocks, otherwise GPU will be out of memory
         dim0_score_start_pos = []
@@ -229,7 +229,7 @@ def test_wrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num
                                         dropout_rates = dropout_rates,
                                         para_path = para_path,
                                         final_size = (output_sizes[0], output_sizes[0], output_sizes[0]))         
-        """
+        
 	
         data_path = whole_volume_path + str(74) + '.mat'
         data_set = np.transpose(np.array(h5py.File(data_path)['patchFlatten']))   
