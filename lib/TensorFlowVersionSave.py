@@ -53,9 +53,9 @@ def initializeWeights(preTrained = True,path='/home/jdominguezmartinez/pruebas/M
         W_L4 = np.load(path+'W_L4.npy')
         b_L4 = np.load(path+'b_L4.npy')
 
-        W0 = tf.Variable(W_L0, name="W0",trainable = False)
-        W1 = tf.Variable(W_L1, name="W1",trainable = False)
-        W2 = tf.Variable(W_L2, name="W2",trainable = False)
+        W0 = tf.Variable(W_L0, name="W0",trainable = True)
+        W1 = tf.Variable(W_L1, name="W1",trainable = True)
+        W2 = tf.Variable(W_L2, name="W2",trainable = True)
 
         W3a = tf.Variable(W_L3, name="W3a")
         W3b = tf.reshape(W3a,shape=[512,150])
@@ -66,9 +66,9 @@ def initializeWeights(preTrained = True,path='/home/jdominguezmartinez/pruebas/M
 	W3 = tf.Variable(W3b, name="W3")
         W4 = tf.Variable(W4b, name="W4")
 	
-        b0 = tf.Variable(b_L0, name ="b0",trainable = False)
-        b1 = tf.Variable(b_L1, name ="b1",trainable = False)
-        b2 = tf.Variable(b_L2, name ="b2",trainable = False)
+        b0 = tf.Variable(b_L0, name ="b0",trainable = True)
+        b1 = tf.Variable(b_L1, name ="b1",trainable = True)
+        b2 = tf.Variable(b_L2, name ="b2",trainable = True)
         b3 = tf.Variable(b_L3, name ="b3")
         b4 = tf.Variable(b_L4, name ="b4")      
 
@@ -79,7 +79,7 @@ def initializeWeights(preTrained = True,path='/home/jdominguezmartinez/pruebas/M
 
     return parameters
 
-def computeCost(Z5,Y,beta,W3,W4):
+def computeCost(Z5,Y,beta,W3,W4,W1,W2):
 
     """
     Computes the cost
@@ -92,7 +92,7 @@ def computeCost(Z5,Y,beta,W3,W4):
     cost - Tensor of the cost function
     """
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z5,labels=Y))
-    reg = tf.nn.l2_loss(W3) + tf.nn.l2_loss(W4)
+    reg = tf.nn.l2_loss(W3) + tf.nn.l2_loss(W4)+ tf.nn.l2_loss(W1)+ tf.nn.l2_loss(W2)
     costa = tf.reduce_mean(cost + beta*reg) 
     return costa
 	
@@ -156,9 +156,9 @@ def forward_propagation(X,parameters):
 
 
 
-def train(learning_rate=0.003,num_epochs =50,beta=0):
+def train(learning_rate=0.003,num_epochs =3000,beta=0.001):
 
-    myBatchGenerator = Bachitazion(sizeOfBatch=128,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/AllPatchesWithMicrobleedsTrain/')
+    myBatchGenerator = Bachitazion(sizeOfBatch=2048,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/AllPatchesWithMicrobleedsTrain/')
     err_val={}
     acc_val={}
     err_train={}
@@ -166,32 +166,37 @@ def train(learning_rate=0.003,num_epochs =50,beta=0):
     X, Y = createPlaceHolders(16,16,1,10,2)
     parameters = initializeWeights()
     Z5 = forward_propagation(X,parameters)
-    cost = computeCost(Z5, Y, beta,parameters["W3"],parameters["W4"])
+    cost = computeCost(Z5, Y, beta,parameters["W3"],parameters["W4"],parameters["W1"],parameters["W2"])
     optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost) 
 #    optimizer = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(cost)    
 #    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)    
  # Calculate the correct predictions
     correctPrediction = tf.equal(tf.argmax(Z5,1), tf.argmax(Y,1))
     # Calculate accuracy on the test set
-    accuracy = tf.reduce_mean(tf.cast(correctPrediction, "float"))
+    accuracy = tf.reduce_mean(tf.cast(correctPrediction, tf.float32))
     #print ("Train Accuracy:", accuracy.eval({X: X_train, Y: Y_train}))
     init = tf.initialize_all_variables()
 
-    saver = tf.train.Saver()
+    saver = tf.train.Saver(max_to_keep=None)
 
     with tf.Session() as sess:   
         sess.run(init)
         for epoch in range(num_epochs):
-
+	    counter = 0.
             trainingCost = 0.
             trainingAcc = 0.
             for batch in range(int(myBatchGenerator.number_batchesT)+1):
+		counter = counter + 1
                 miniX,miniY = myBatchGenerator.nextBatch_T()
+#		print("***********************************************" + str(miniX.shape) + "   " + str(miniX.shape[0]))
                 _ , batchTrainingCost,batchTrainingAcc = sess.run([optimizer, cost,accuracy], feed_dict={X: miniX, Y: miniY})
                 trainingCost += batchTrainingCost
                 trainingAcc += batchTrainingAcc
-            trainingCost /= myBatchGenerator.number_batchesT
-            trainingAcc /= myBatchGenerator.number_batchesT
+#		print("Training Cost -- >" + str(trainingAcc))
+#               print("Counter --->  " + str(counter))
+            
+	    trainingCost /= (counter)
+            trainingAcc /= (counter)
 
             print("End of epoch {0:02d}: err(train) = {1:.2f} acc(train) = {2:.2f}".format(epoch+1,trainingCost,trainingAcc))
 
@@ -199,28 +204,35 @@ def train(learning_rate=0.003,num_epochs =50,beta=0):
 
             evalCost = 0.
             evalAcc = 0.
+	    counter = 0
             for batch in range(int(myBatchGenerator.number_batchesE)+1):
-                miniX,miniY = myBatchGenerator.nextBatch_E()
+                counter = counter + 1
+		miniX,miniY = myBatchGenerator.nextBatch_E()
+#                print("*******************     " + str(miniX.shape))
                 batchEvalCost,batchEvalAcc = sess.run([cost,accuracy], feed_dict={X: miniX, Y: miniY})
                 evalCost += batchEvalCost
                 evalAcc += batchEvalAcc
-            evalCost /= myBatchGenerator.number_batchesE
-            evalAcc /= myBatchGenerator.number_batchesE
-
+            evalCost /= counter
+            evalAcc /= counter
             print("                 err(eval) = {1:.2f} acc(eval) = {2:.2f}".format(epoch+1,evalCost,evalAcc))
+#	    pdb.set_trace()
             err_val[epoch + 1] = evalCost
             acc_val[epoch + 1] = evalAcc
             err_train[epoch + 1] = trainingCost
             acc_train[epoch + 1] = trainingAcc
 
-	    if epoch %  10 == 0:
-                saver.save(sess, '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model',global_step=epoch)
+	    if epoch % 100 == 0:
+                saver.save(sess, '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model_AD13_all_L2bigR_',global_step=epoch)
 
-
+            if epoch %100 ==0:
+                save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_AD13_all_L2bigR_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
+    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_AD13_all_L2bigR_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
+    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_AD13_all_L2bigR_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
+    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_AD13_all_L2bigR_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
     sess.close()
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_AD13_all_L2_bigR"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_AD13_all_L2_bigR"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_AD13_all_L2_bigR"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_AD13_all_L2_bigR"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
 
 train()

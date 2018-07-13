@@ -152,9 +152,9 @@ def forward_propagation(X,parameters):
 
 
 
-def train(learning_rate=0.003,num_epochs = 1000,beta=0.001):
+def train(learning_rate=0.003,num_epochs = 2000,beta=0.001):
 
-    myBatchGenerator = Bachitazion(sizeOfBatch=128,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/AllPatchesWithMicrobleedsTrain/')
+    myBatchGenerator = Bachitazion(sizeOfBatch=256,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/AllPatchesWithMicrobleedsTrain/')
     err_val={}
     acc_val={}
     err_train={}
@@ -207,9 +207,9 @@ def train(learning_rate=0.003,num_epochs = 1000,beta=0.001):
             err_train[epoch + 1] = trainingCost
             acc_train[epoch + 1] = trainingAcc
     sess.close()
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_GD11"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_GD11"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_GD11"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_GD11"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
 
 train()

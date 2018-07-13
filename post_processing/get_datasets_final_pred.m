@@ -1,7 +1,7 @@
 function get_datasets_final_pred(result_path,xdim,ydim,zdim)
     % This script is to extract cubic candidates to wrap into the final
     % prediction model
-    img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/raw_data/';
+    img_data_path ='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/DataResampledV2/' ;
     files = dir(img_data_path);
     files(1:2) = [];
     score_map_cand_path = [result_path 'score_map_cands/'];
@@ -16,7 +16,7 @@ function get_datasets_final_pred(result_path,xdim,ydim,zdim)
         counter = 0;
         test_set_x = zeros([2000 xdim*ydim*zdim]);  %To reserve memory... funny thing of doing this. 
         fprintf('Loading No.%d test subject (total %d).\n', jj, length(files));
-        nii = load_untouch_nii([img_data_path sprintf('%02d',jj) '.nii']);
+        nii = load_untouch_nii([img_data_path sprintf('%02d',jj) '.nii.gz']);
         load([score_map_cand_path num2str(jj) '_cand.mat']);
         [b_x b_y b_z] = size(nii.img);
         for i = 1:size(center,1)

@@ -1,0 +1,8 @@
+los modelos del my_test_model_AD12  estan hechos con esto
+(learning_rate=0.006,num_epochs =2000,beta=0.003):
+
+modelo de my_test_model_AD12_1 aunque hay dos arrays guardados, el bueno es el que tiene estos parametros
+(learning_rate=0.003,num_epochs =2000,beta=0.003):
+
+
+

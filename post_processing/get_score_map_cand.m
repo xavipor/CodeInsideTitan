@@ -14,6 +14,7 @@ function get_score_map_cand(result_path,dimx,dimy,dimz,threshold_score_mask)
         fprintf('Loading No.%d testing subject (total %d).\n', jj,length(files));        
         load([score_map_path num2str(jj) '_score_mask.mat']);
         sz_sp = size(score_mask);%[2 249 249 70]
+        %prueba poniendo un 1 en lo que queremos coger si no, no tiene puto sentido
         score_map = reshape(score_mask(2,:,:,:),sz_sp(2:end));%We take justhe postive layer I suppose
         filtered_score_map = peak_score_map(score_map); %We just keep the values of the pixels that happens to be equal to a maximum after applying a filter  
         [mask center_score_map] = get_proposal_from_score_map_all_count(filtered_score_map,threshold_score_mask); %Based on the use of in2sub get the  position of pixels with values bigger than the treshold

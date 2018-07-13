@@ -5,7 +5,8 @@ clear;clc;
 addpath('./NIfTI_20140122/')
 
 mode = 'test';
-img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/DataResampledV2/';
+%img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/DataResampledV2/';
+img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/raw_data/';
 save_datasets_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/result/mat_data/';
 if ~exist(save_datasets_path)
     mkdir(save_datasets_path);
@@ -14,6 +15,10 @@ end
 x = 536;
 y = 536;
 z = 170;
+
+%x = 512
+%y = 512
+%z= 150 
 
 files = dir(img_data_path);
 files(1:2)=[]%To delete the first to elements that are junk
@@ -27,6 +32,9 @@ for jj = 1:num
     [xrange yrange zrange] = size(nii.img);
     data_volume(1:xrange,1:yrange,1:zrange) = nii.img(:,:,:);
     data_volume = data_volume(1:end,1:end,1:end-2);
+    
+    data_volume = (data_volume - min(data_volume(:)))./(max(data_volume(:)) - min(data_volume(:)));
+    
     data = single(reshape(data_volume,[1 prod(size(data_volume))]));
     save([save_datasets_path num2str(jj) '_' mode '.mat'],'data','-v7.3');  
     clear nii data data_volume
