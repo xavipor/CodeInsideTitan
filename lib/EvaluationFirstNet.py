@@ -121,7 +121,7 @@ def forward_propagation(X,parameters):
     p_y_given_x = tf.nn.softmax(reshapedZ5)
     score_map = tf.reshape(p_y_given_x,[40,87,87,2])
     score_map_final = tf.transpose(score_map,[3,2,1,0])
-    return p_y_given_x
+    return score_map_final
 
 def testWrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num,maxpool_sizes,activations,dropout_rates,
                 para_path,save_score_map_path,whole_volume_path,mode):
@@ -200,8 +200,8 @@ def testWrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num,
                         
                         print(smaller_score.shape)
 			print("Ojo chequea el smaller score")
-			pdb.set_trace()
-			prob = p_y_given_x.eval()
+#			pdb.set_trace()
+			
 			
                         
                         sess.close()

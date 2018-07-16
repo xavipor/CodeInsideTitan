@@ -5,8 +5,8 @@ clear;clc;
 addpath('./NIfTI_20140122/')
 
 mode = 'test';
-%img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/DataResampledV2/';
-img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/raw_data/';
+img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/DataResampledV2/';
+%img_data_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/raw_data/';
 save_datasets_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/result/mat_data/';
 if ~exist(save_datasets_path)
     mkdir(save_datasets_path);
