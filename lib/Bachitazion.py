@@ -11,7 +11,7 @@ from math import floor
 import h5py
 import numpy as np 
 class Bachitazion(object):
-    def __init__(self, sizeOfBatch=128,pathT="/home/javier/Documents/DOCUMENTOS/Microbleeds/GoDARTS/AllPatchesWithMicrobleedsTrain/"):
+    def __init__(self, sizeOfBatch=128,pathT="/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/data/newImages/AllPatchesWithMicrobleedsTrain/patches14/"):
         self.files =shuffle(listdir(pathT))
         self.batchSize = sizeOfBatch
         self.listTrain = listdir(pathT+"Training/") 

@@ -54,7 +54,7 @@ def initializeWeights(preTrained = True,path='/home/jdominguezmartinez/pruebas/M
         b_L4 = np.load(path+'b_L4.npy')
 
         W0 = tf.Variable(W_L0, name="W0",trainable = True)
-        W1 = tf.Variable(W_L1, name="W1",trainable = True)
+        W1 = tf.Variable(W_L1, name="W1",trainable =True)
         W2 = tf.Variable(W_L2, name="W2",trainable = True)
 
         W3a = tf.Variable(W_L3, name="W3a")
@@ -68,7 +68,7 @@ def initializeWeights(preTrained = True,path='/home/jdominguezmartinez/pruebas/M
 	
         b0 = tf.Variable(b_L0, name ="b0",trainable = True)
         b1 = tf.Variable(b_L1, name ="b1",trainable = True)
-        b2 = tf.Variable(b_L2, name ="b2",trainable = True)
+        b2 = tf.Variable(b_L2, name ="b2",trainable= True)
         b3 = tf.Variable(b_L3, name ="b3")
         b4 = tf.Variable(b_L4, name ="b4")      
 
@@ -92,7 +92,7 @@ def computeCost(Z5,Y,beta,W3,W4,W1,W2):
     cost - Tensor of the cost function
     """
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z5,labels=Y))
-    reg = tf.nn.l2_loss(W3) + tf.nn.l2_loss(W4)+ tf.nn.l2_loss(W1)+ tf.nn.l2_loss(W2)
+    reg = tf.nn.l2_loss(W3) + tf.nn.l2_loss(W4) + tf.nn.l2_loss(W1) + tf.nn.l2_loss(W2)
     costa = tf.reduce_mean(cost + beta*reg) 
     return costa
 	
@@ -156,9 +156,9 @@ def forward_propagation(X,parameters):
 
 
 
-def train(learning_rate=0.001,num_epochs =5000,beta=0.008):
+def train(learning_rate=0.003,num_epochs =5000,beta=0.001):
 
-    myBatchGenerator = Bachitazion(sizeOfBatch=2048,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/data/AllPatchesWithMicrobleedsTrain/')
+    myBatchGenerator = Bachitazion(sizeOfBatch=2048,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/data/newImages/AllPatchesWithMicrobleedsTrain/patches14/')
     err_val={}
     acc_val={}
     err_train={}
@@ -222,17 +222,17 @@ def train(learning_rate=0.001,num_epochs =5000,beta=0.008):
             acc_train[epoch + 1] = trainingAcc
 
 	    if epoch % 100 == 0:
-                saver.save(sess, '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model_AD17_all_L2bigR_'+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),global_step=epoch)
+                saver.save(sess, '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model_AD23_z14_All'+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),global_step=epoch)
 
             if epoch %100 ==0:
-                save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_AD17_all_L2bigR_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
-    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_AD17_all_L2bigR_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
-    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_AD17_all_L2bigR_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
-    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_AD17_all_L2bigR_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
+                save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_AD23_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
+    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_AD23_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
+    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_AD23_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
+    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_AD23_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
     sess.close()
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_AD17_all_L2_bigR"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_AD17_all_L2_bigR"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_AD17_all_L2_bigR"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_AD17_all_L2_bigR"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_AD23_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_AD23_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_AD23_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
+    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_AD23_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
 
 train()
