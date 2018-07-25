@@ -1,2 +1,2 @@
-model_checkpoint_path: "/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model_AD23_z14_All0.003_5000_0.001-300"
-all_model_checkpoint_paths: "/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model_AD23_z14_All0.003_5000_0.001-300"
+model_checkpoint_path: "/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model_AD25_test_z14_All0.001_5000_0.03-0"
+all_model_checkpoint_paths: "/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model_AD25_test_z14_All0.001_5000_0.03-0"

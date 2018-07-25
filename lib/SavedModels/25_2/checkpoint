@@ -1,0 +1,2 @@
+model_checkpoint_path: "/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/25_2/my_test_model_AD25_2_z14_All0.001_5000_0.03-1400"
+all_model_checkpoint_paths: "/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/25_2/my_test_model_AD25_2_z14_All0.001_5000_0.03-1400"
