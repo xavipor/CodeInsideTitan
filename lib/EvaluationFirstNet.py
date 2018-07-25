@@ -117,7 +117,7 @@ def forward_propagation(X,parameters):
     #Z5 =tf.add(tf.matmul(A4,W_L4),b_L4)
     
     reshapedZ5 = tf.reshape(Z5,[40, 87, 87, 2])
-    reshapedZ5 = tf.reshape(Z5,[40*87*87, 2])
+    reshapedZ5 = tf.reshape(reshapedZ5,[40*87*87, 2])
     p_y_given_x = tf.nn.softmax(reshapedZ5)
     score_map = tf.reshape(p_y_given_x,[40,87,87,2])
     score_map_final = tf.transpose(score_map,[3,2,1,0])
