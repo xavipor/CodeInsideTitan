@@ -31,6 +31,7 @@ def initializeVariables():
         AFter all the wights are loaded, the variables for tensorflow are created. 
     """
     path ='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/WeightsTrained/'
+#    path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/PesosPruebaTf/'
     W_L0 = np.load(path+'W0.npy')
     b_L0 = np.load(path+'b0.npy')
 
@@ -41,6 +42,7 @@ def initializeVariables():
     b_L2 = np.load(path+'b2.npy')
 
     W_L3 = np.load(path+'W3.npy')
+#    pdb.set_trace()
     W_L3c = np.reshape(W_L3,(2,2,2,64,150))
     b_L3 = np.load(path+'b3.npy')
 
@@ -123,7 +125,7 @@ def forward_propagation(X,parameters):
     score_map_final = tf.transpose(score_map,[3,2,1,0])
     return score_map_final
 
-def testWrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num,maxpool_sizes,activations,dropout_rates,
+def mytestWrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num,maxpool_sizes,activations,dropout_rates,
                 para_path,save_score_map_path,whole_volume_path,mode):
     files = os.listdir(whole_volume_path)
     n_cases = len(files)
@@ -182,20 +184,21 @@ def testWrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num,
 
         X= createPlaceHolders(188,188,1,88)
         parameters = initializeVariables()
+	init = tf.initialize_all_variables()
+
         for dim2 in range (clip_rate[2]):
             for dim1 in range(clip_rate[1]):
                 for dim0 in range(clip_rate[0]):
                     smaller_data = data_set[:,dim2_pos[dim2][0]-1:dim2_pos[dim2][1],:,dim1_pos[dim1][0]-1:dim1_pos[dim1][1],dim0_pos[dim0][0]-1:dim0_pos[dim0][1]]
                     aux=smaller_data.transpose(0,1,3,4,2)
-		    
+
                     #Aqui va el run de la red neuronal y lo guardamos en smaller_score
                     with tf.Session() as sess:
                         
-                        
-                        Z5 = forward_propagation(X,parameters)
-                        init = tf.initialize_all_variables()
                         sess.run(init)
-                        smaller_score = sess.run(Z5,{X:aux})
+                        
+                        output = forward_propagation(X,parameters)
+                        smaller_score = sess.run(output,{X:aux})
                         print("_____________________________The value of the convolutional output is... _________________")
                         
                         print(smaller_score.shape)
@@ -233,7 +236,7 @@ def test_model():
     dropout_rates = [0.2,0.3,0.3,0.3,0.3]
     save_score_map_path = result_path + 'score_map/'
 
-    testWrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num,maxpool_sizes,activations,dropout_rates,para_path,save_score_map_path,whole_volume_path,mode='test')
+    mytestWrapper(input_sizes,output_sizes,patch_size,clip_rate,M_layer,layer_num,maxpool_sizes,activations,dropout_rates,para_path,save_score_map_path,whole_volume_path,mode='test')
     
 if __name__ == '__main__':
     try:

@@ -4,11 +4,12 @@ import numpy as np
 pathToSave = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/WeightsTrained/'
 
 # Add ops to save and restore all the variables.
-saver = tf.train.import_meta_graph("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model_GD23_z14_all_L2bigR_0.003_5000_0.001-4700.meta")
+#saver = tf.train.import_meta_graph("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/AllNetGDZ14/my_test_model_GD26_test_z14_0.001_5000_0.003-4200.meta")
+saver = tf.train.import_meta_graph("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModel/LastAdamZ14_lessLR/my_test_model_0.0003_5000_0.005-140.meta")
 
 with tf.Session() as sess:
   # Restore variables from disk.
-  saver.restore(sess,("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/my_test_model_GD23_z14_all_L2bigR_0.003_5000_0.001-4700"))
+  saver.restore(sess,("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModel/LastAdamZ14_lessLR/my_test_model_0.0003_5000_0.005-140"))
   print("Model restored.")
   # Check the values of the variables and save them
   for i in range(5):

@@ -5,19 +5,21 @@ import cPickle
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import pdb
-#import Bachitazion
+from BachitazionTestMicrobleeds import BachitazionTestMicrobleeds
+
+"""
+Used just to check the values of the patches, like to see the values of the error and what is atributted to each image
+"""
 
 
-
-
-whole_volume_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/patches/'
-data_path = whole_volume_path + str(74) + '.mat'
-data_set = np.transpose(np.array(h5py.File(data_path)['patchFlatten']))
-image =  data_set.reshape((data_set.shape[0],10,16,16,1))
-image2 = np.zeros((3,10,16,16,1))
-image2[0,:,:,:,:] = image
-image2[1,:,:,:,:] = image
-image2[2,:,:,:,:] = image
+#whole_volume_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/patches/'
+#data_path = whole_volume_path + str(74) + '.mat'
+#data_set = np.transpose(np.array(h5py.File(data_path)['patchFlatten']))
+#image =  data_set.reshape((data_set.shape[0],10,16,16,1))
+image2 = np.ones((3,10,16,16,1))
+#image2[0,:,:,:,:] = image
+#image2[1,:,:,:,:] = image
+#image2[2,:,:,:,:] = image
 
 def createPlaceHolders(n_H,n_W,n_C,n_D,n_Y):
     """
@@ -36,6 +38,9 @@ def createPlaceHolders(n_H,n_W,n_C,n_D,n_Y):
 
 def initializeWeights(preTrained = True,path='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/PesosPruebaTf/'):
     if preTrained:
+       
+#        path='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/WeightsTrained/' 
+
         W_L0 = np.load(path+'W_L0.npy')
         b_L0 = np.load(path+'b_L0.npy')
 
@@ -57,6 +62,7 @@ def initializeWeights(preTrained = True,path='/home/jdominguezmartinez/pruebas/M
 
         W3 = tf.Variable(W_L3, name="W3")
         W3 = tf.reshape(W3,shape=[512,150])
+        pdb.set_trace()
         W4 = tf.Variable(W_L4, name="W4")
         W4 = tf.reshape(W4,shape=[150,2])
 
@@ -86,8 +92,9 @@ def computeCost(Z5,Y):
     cost - Tensor of the cost function
     """
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z5,labels=Y))
-    return cost
+#    cost = tf.nn.softmax_cross_entropy_with_logits(logits=Z5,labels=Y)
 
+    return cost
 
 
 
@@ -149,6 +156,11 @@ def forward_propagation(X,parameters):
 
 #myBatchGenerator = 
 with tf.Session() as sess:   
+    
+    myBatchGenerator = BachitazionTestMicrobleeds(sizeOfBatch=50,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/data/eightImage/')
+    
+    miniX,miniY = myBatchGenerator.nextBatch_T()
+    pdb.set_trace()
     X, Y = createPlaceHolders(16,16,1,10,2)
     parameters = initializeWeights()
     Z5 = forward_propagation(X,parameters)
@@ -156,13 +168,29 @@ with tf.Session() as sess:
     init = tf.initialize_all_variables()
     sess.run(init)
     v= sess.run(Z5,{X:image2})
-    c = sess.run(cost,{X:image2,Y:np.array([[1,0],[1,0],[1,0]])})
+    c = sess.run(cost,{X:image2,Y:np.array([[0,1],[0,1],[0,1]])})
 
-    print(c,v)
+    print(v)
+    print(c)
     #Axis = 1, we need to collapse the columns
     correct_prediction = tf.equal(tf.arg_max(Z5,1), tf.arg_max(Y,1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-    print ("Train Accuracy:", accuracy.eval({X: image2, Y:np.array([[0,1],[1,0],[1,0]])}))
+    print ("Train Accuracy:", accuracy.eval({X: image2, Y:np.array([[0,1],[0,1],[0,1]])}))
+    
+    print("_________________________________________________________")
+    
+    
+    
+    v= sess.run(Z5,{X:miniX})
+    c = sess.run(cost,{X:miniX,Y:miniY})
+    print("value de Z5_____\n")
+    print(v)
+    print("value de cost_____\n")
+    print(c)
+        
+    print ("Train Accuracy:", accuracy.eval({X: miniX, Y:miniY}))
+
+
     sess.close()
 
 

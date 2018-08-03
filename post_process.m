@@ -8,7 +8,8 @@ result_path = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/
 dimx = 16;
 dimy = 16;
 dimz = 10;
-threshold_score_mask = 0.56;
+threshold_score_mask = 0.51;
+display(result_path)
 get_score_map_cand(result_path,dimx,dimy,dimz,threshold_score_mask);
 
 

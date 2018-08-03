@@ -10,12 +10,16 @@ from random import shuffle
 from math import floor
 import h5py
 import numpy as np 
+import pdb
 class Bachitazion(object):
     def __init__(self, sizeOfBatch=128,pathT="/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/data/newImages/AllPatchesWithMicrobleedsTrain/patches14/"):
         self.files =shuffle(listdir(pathT))
         self.batchSize = sizeOfBatch
-        self.listTrain = listdir(pathT+"Training/") 
+	
+        self.listTrain =listdir(pathT+"Training/") 
         self.listEval = listdir(pathT+"Evaluation/")
+	shuffle(self.listTrain)
+	shuffle(self.listEval)
         self.counterT = -1
         self.counterE = -1
         self.number_batchesT =floor(len(self.listTrain)/self.batchSize) 
@@ -26,7 +30,7 @@ class Bachitazion(object):
         self.counterT=self.counterT+1
         #Take care, if counterT or counterE is equal to number_batches, the length is goign to be different,
         #But we can save both cases with the following:
-
+	
         currentBatchSize = len(self.listTrain[self.counterT * self.batchSize:(self.counterT*self.batchSize+self.batchSize)])
         X=np.zeros((currentBatchSize,self.myShape[2],self.myShape[0],self.myShape[1],1))
         Y=np.zeros((currentBatchSize,2))
@@ -37,11 +41,15 @@ class Bachitazion(object):
             aux= np.array(h5py.File(data_path)['patchFlatten'])
             patch= aux.reshape(self.myShape)
             patch = patch.transpose(2,0,1)
+#            if "WO" in element:
+#                auxY = np.array([1,0])
+#            else:
+#                auxY = np.array([0,1])
             if "WO" in element:
-                auxY = np.array([1,0])
-            else:
-                auxY = np.array([0,1])
-            
+		auxY = np.array([0,1])
+	    else:
+		auxY = np.array([1,0])
+
             X[i,:,:,:,0]=patch
             Y[i,:]=auxY
             
@@ -68,9 +76,9 @@ class Bachitazion(object):
             patch = patch.transpose(2,0,1)
             
             if "WO" in element:
-                auxY = np.array([1,0])
-            else:
                 auxY = np.array([0,1])
+            else:
+                auxY = np.array([1,0])
             
             X[i,:,:,:,0]=patch
             Y[i,:]=auxY

@@ -95,8 +95,8 @@ def computeCost(Z5,Y,beta,W3,W4,W1,W2):
     cost - Tensor of the cost function
     """
     cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z5,labels=Y))
-    reg = tf.nn.l2_loss(W3) + tf.nn.l2_loss(W4) + tf.nn.l2_loss(W1) + tf.nn.l2_loss(W2)
-    costa = tf.reduce_mean(cost + beta*reg) 
+    reg = tf.nn.l2_loss(W3) + tf.nn.l2_loss(W4)  + tf.nn.l2_loss(W2) + tf.nn.l2_loss(W1)
+    costa = tf.reduce_mean(cost + beta*reg)
     return costa
 	
 
@@ -159,8 +159,8 @@ def forward_propagation(X,parameters):
 
 
 
-def train(learning_rate=0.001,num_epochs =5000,beta=0.03):
-    myPathModel = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModels/'
+def train(learning_rate=0.001,num_epochs =5000,beta=0.005):
+    myPathModel = '/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/SavedModel/ChangedBachization/'
     if not os.path.exists(myPathModel):
 	os.makedirs(myPathModel)
     myBatchGenerator = Bachitazion(sizeOfBatch=2048,pathT='/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/data/newImages/AllPatchesWithMicrobleedsTrain/patches14/')
@@ -170,13 +170,13 @@ def train(learning_rate=0.001,num_epochs =5000,beta=0.03):
     acc_train={}
     X, Y = createPlaceHolders(16,16,1,10,2)
     parameters = initializeWeights()
-    Z5 = forward_propagation(X,parameters)
-    cost = computeCost(Z5, Y, beta,parameters["W3"],parameters["W4"],parameters["W1"],parameters["W2"])
-    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost) 
+    outputs = forward_propagation(X,parameters)
+    cost = computeCost(outputs, Y, beta,parameters["W3"],parameters["W4"],parameters["W1"],parameters["W2"])
+#    optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost) 
 #    optimizer = tf.train.RMSPropOptimizer(learning_rate=learning_rate).minimize(cost)    
-#    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)    
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)    
  # Calculate the correct predictions
-    correctPrediction = tf.equal(tf.argmax(Z5,1), tf.argmax(Y,1))
+    correctPrediction = tf.equal(tf.argmax(outputs,1), tf.argmax(Y,1))
     # Calculate accuracy on the test set
     accuracy = tf.reduce_mean(tf.cast(correctPrediction, tf.float32))
     #print ("Train Accuracy:", accuracy.eval({X: X_train, Y: Y_train}))
@@ -226,18 +226,15 @@ def train(learning_rate=0.001,num_epochs =5000,beta=0.03):
             err_train[epoch + 1] = trainingCost
             acc_train[epoch + 1] = trainingAcc
 
-	    if epoch % 50 == 0:
-                saver.save(sess, myPathModel+'my_test_model_AD25_test_z14_All'+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),global_step=epoch)
+	    if epoch % 10  == 0:
+                saver.save(sess, myPathModel+'my_test_model_'+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),global_step=epoch)
 
-            if epoch %25 ==0:
-                save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_AD25_test_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
-    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_AD25_test_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
-    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_AD25_test_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
-    		save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_AD25_test_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
+            if epoch %10 ==0:
+                save_to_file(myPathModel+ "ErrorV_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
+    		save_to_file(myPathModel+ "AccV_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
+    		save_to_file(myPathModel+ "ErrorT_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
+    		save_to_file(myPathModel+ "AccT_"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
     sess.close()
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorV_AD25_test_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_val)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccV_AD25_test_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_val)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/ErrorT_AD25_test_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),err_train)
-    save_to_file("/home/jdominguezmartinez/pruebas/Microbleeds/cmb-3dcnn-code-v1.0/demo/code/lib/ExperimentsFirstNet/AccT_AD25_test_z14_All"+str(learning_rate)+"_"+str(num_epochs)+"_"+str(beta),acc_train)
 
 train()
+
